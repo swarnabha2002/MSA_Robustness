@@ -146,16 +146,40 @@ class SeqEncoder(nn.Module):
         return h_out_seq, h_out
     
     def _masked_avg_pool(self, lengths, mask, *inputs):
-        """Perform a masked average pooling operation
-        Args:
-            lengths (Tensor): shape of (batch_size, max_seq_len) 
-            inputs (Tuple[Tensor]): shape of (batch_size, max_seq_len, embedding)
-        """
         res = []
         for t in inputs:
-            masked_mul = t * mask # batch_size, seq_len, emb_size
-            res.append(masked_mul.sum(1)/lengths.unsqueeze(-1))
+            # Get actual batch size of the feature tensor
+            curr_batch_size = t.size(0) 
+            
+            # Check if data was doubled (e.g., for Discriminator/Robustness tasks)
+            # If curr_batch_size (42) is twice lengths (21), we must repeat lengths
+            if curr_batch_size == 2 * lengths.size(0):
+                curr_lengths = torch.cat([lengths, lengths], dim=0)
+                curr_mask = torch.cat([mask, mask], dim=0)
+            else:
+                # Otherwise, just ensure they match (handles last-batch issues)
+                curr_lengths = lengths[:curr_batch_size]
+                curr_mask = mask[:curr_batch_size]
+
+            # Ensure sequence length alignment
+            if t.size(1) != curr_mask.size(1):
+                curr_mask = curr_mask[:, :t.size(1), :]
+            
+            masked_mul = t * curr_mask
+            res.append(masked_mul.sum(1) / curr_lengths.unsqueeze(-1))
         return res
+    
+    # def _masked_avg_pool(self, lengths, mask, *inputs):
+    #     """Perform a masked average pooling operation
+    #     Args:
+    #         lengths (Tensor): shape of (batch_size, max_seq_len) 
+    #         inputs (Tuple[Tensor]): shape of (batch_size, max_seq_len, embedding)
+    #     """
+    #     res = []
+    #     for t in inputs:
+    #         masked_mul = t * mask # batch_size, seq_len, emb_size
+    #         res.append(masked_mul.sum(1)/lengths.unsqueeze(-1))
+    #     return res
 
     def forward_enc(self, input_l, input_a, input_v, lengths=None, mask=None):
         batch_size = lengths.size(0)
