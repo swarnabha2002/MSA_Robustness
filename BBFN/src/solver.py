@@ -83,7 +83,7 @@ class Solver(object):
                     nn.init.orthogonal_(param)
                 # print('\t' + name, param.requires_grad)
 
-            self.scheduler = ReduceLROnPlateau(self.optimizer, mode='min', patience=20, factor=0.1, verbose=True)
+            self.scheduler = ReduceLROnPlateau(self.optimizer, mode='min', patience=20, factor=0.1)
 
 
     ####################################################################
