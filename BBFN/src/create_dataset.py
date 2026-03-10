@@ -65,7 +65,7 @@ class MOSI:
             self.train = load_pickle(DATA_PATH + '/bbfn_train.pkl')
             self.dev = load_pickle(DATA_PATH + '/bbfn_dev.pkl')
             self.test = load_pickle(DATA_PATH + '/bbfn_test.pkl')
-            self.pretrained_emb, self.word2id = torch.load(CACHE_PATH)
+            self.pretrained_emb, self.word2id = torch.load(CACHE_PATH,weights_only=False)
 
         except:
 
@@ -244,7 +244,7 @@ class MOSEI:
             self.train = load_pickle(DATA_PATH + '/bbfn_train.pkl')
             self.dev = load_pickle(DATA_PATH + '/bbfn_dev.pkl')
             self.test = load_pickle(DATA_PATH + '/bbfn_test.pkl')
-            self.pretrained_emb, self.word2id = torch.load(CACHE_PATH)
+            self.pretrained_emb, self.word2id = torch.load(CACHE_PATH,weights_only=False)
 
         except:
 
@@ -415,7 +415,7 @@ class UR_FUNNY:
             self.train = load_pickle(DATA_PATH + '/train.pkl')
             self.dev = load_pickle(DATA_PATH + '/dev.pkl')
             self.test = load_pickle(DATA_PATH + '/test.pkl')
-            self.pretrained_emb, self.word2id = torch.load(CACHE_PATH)
+            self.pretrained_emb, self.word2id = torch.load(CACHE_PATH,weights_only=False)
 
         except:
 
